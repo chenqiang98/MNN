@@ -273,6 +273,12 @@ void chat(Llm* llm, const std::vector<std::string> &knowledgeChunks, Embedding* 
     ChatMessages messages;
     messages.emplace_back("system", "You are a helpful assistant.");
     auto context = llm->getContext();
+    std::cout << "Who am I serving for?(Hint: customer/supplier/pharmacy store/others...)" << std::endl;
+    std::string role;
+    std::getline(std::cin, role);
+    toLowerCase(role);
+    messages.emplace_back("system", "User role: " + role);
+    std::cout << "Chat with assistant now with local knowledge base, type /exit to exit, /reset to reset." << std::endl;
     while (true) {
         std::cout << "\nUser: ";
         std::string user_str;
@@ -287,7 +293,7 @@ void chat(Llm* llm, const std::vector<std::string> &knowledgeChunks, Embedding* 
         }
         std::cout << "Searching knowledge base..." << std::endl;
         std::string ragContext = RAG(user_str, knowledgeChunks, embedding);
-        std::cout << "RAG: " << ragContext << std::endl;
+        // std::cout << "RAG: " << ragContext << std::endl;
         messages.emplace_back("system", "Relevant knowledge:" + ragContext);
         messages.emplace_back("user", user_str);
         std::cout << "\nA: " << std::flush;
